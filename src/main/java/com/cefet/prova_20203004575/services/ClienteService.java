@@ -58,7 +58,7 @@ public class ClienteService {
         return new ClienteDTO(pessoaSalvo);
     }
 
-    // Atualizar Tipo
+    // Atualizar 
     public ClienteDTO update(Long id, ClienteDTO dto) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrada com ID: " + id));
