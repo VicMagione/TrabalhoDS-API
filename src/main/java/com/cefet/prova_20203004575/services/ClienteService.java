@@ -26,13 +26,15 @@ public class ClienteService {
     }
 
     public Cliente criarCliente(Cliente cliente) {
-        if (clienteRepository.existsByLogin(cliente.getLogin())) {
-            throw new IllegalArgumentException("Login já existe.");
+        if (clienteRepository.existsByCpf(cliente.getCpf())) {
+            throw new IllegalArgumentException("CPF já existe.");
         }
 
         cliente.setNome(cliente.getNome());
         cliente.setCpf(cliente.getCpf());
         cliente.setSenha(passwordEncoder.encode(cliente.getSenha()));
+        cliente.setEmail(cliente.getEmail());
+        cliente.setTelefone(cliente.getTelefone());
         return clienteRepository.save(cliente);
     }
 

@@ -1,21 +1,21 @@
 package com.cefet.prova_20203004575.dto;
 
 public class LoginDTO {
-    private String login;
+    private String cpf;
     private String senha;
 
     
     public LoginDTO() {
     }
-    public LoginDTO(String login, String senha) {
-        this.login = login;
+    public LoginDTO(String cpf, String senha) {
+        this.cpf = cpf;
         this.senha = senha;
     }
-    public String getLogin() {
-        return login;
+    public String getCpf() {
+        return cpf;
     }
-    public void setLogin(String login) {
-        this.login = login;
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
     public String getSenha() {
         return senha;

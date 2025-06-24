@@ -16,9 +16,9 @@ public class ClienteDetailsService implements UserDetailsService {
     private ClienteRepository clienteRepository;
 
     @Override
-    public ClienteDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        Cliente usuario = clienteRepository.findByLogin(login)
-            .orElseThrow(() -> new UsernameNotFoundException("Cliente não encontrado: " + login));
+    public ClienteDetails loadUserByUsername(String cpf) throws UsernameNotFoundException {
+        Cliente usuario = clienteRepository.findByCpf(cpf)
+            .orElseThrow(() -> new UsernameNotFoundException("Cliente não encontrado: " + cpf));
         return new ClienteDetails(usuario);
     }
 }
