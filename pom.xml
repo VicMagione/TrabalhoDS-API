@@ -10,10 +10,10 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.cefet</groupId>
-	<artifactId>prova-20203004575</artifactId>
+	<artifactId>API</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>prova-20203004575</name>
-	<description>Prova-20203004575</description>
+	<name>API</name>
+	<description>API</description>
 	<url />
 	<licenses>
 		<license />
