@@ -24,6 +24,12 @@ public class ClienteController {
     @Autowired
     private ClienteService clienteService;
 
+    @GetMapping("/cpf/{cpf}")
+    public ResponseEntity<ClienteDTO> findByCPF(@PathVariable String cpf) {
+        ClienteDTO clienteDTO = clienteService.findByCPF(cpf);
+        return ResponseEntity.ok(clienteDTO);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ClienteDTO> findById(@PathVariable Long id) {
         ClienteDTO clienteDTO = clienteService.findById(id);
@@ -47,14 +53,26 @@ public class ClienteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClienteDTO> update(@PathVariable Long id, @RequestBody ClienteDTO clienteDTO) {
+    public ResponseEntity<ClienteDTO> update(@PathVariable Long id, @RequestBody Cliente clienteDTO) {
         ClienteDTO pessoaAtualizado = clienteService.update(id, clienteDTO);
+        return ResponseEntity.ok(pessoaAtualizado);
+    }
+
+    @PutMapping("/cpf/{cpf}")
+    public ResponseEntity<ClienteDTO> update(@PathVariable String cpf, @RequestBody Cliente clienteDTO) {
+        ClienteDTO pessoaAtualizado = clienteService.update(cpf, clienteDTO);
         return ResponseEntity.ok(pessoaAtualizado);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         clienteService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/cpf/{cpf}")
+    public ResponseEntity<Void> delete(@PathVariable String cpf) {
+        clienteService.deleteByCpf(cpf);
         return ResponseEntity.noContent().build();
     }
 }

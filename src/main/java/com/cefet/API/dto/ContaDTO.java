@@ -10,15 +10,16 @@ public class ContaDTO {
     private Double limite;
     private String chavePIX;
     private ClienteDTO cliente;
-    
-
+    private String cpf;
 
     public Double getLimite() {
         return limite;
     }
+
     public ContaDTO() {
     }
-    public Double getSaldo(){
+
+    public Double getSaldo() {
         return saldo;
     }
 
@@ -34,7 +35,6 @@ public class ContaDTO {
         return cliente;
     }
 
-    
     public ContaDTO(Conta conta) {
         this.id = conta.getId();
         this.numero = conta.getNumero();
@@ -42,11 +42,15 @@ public class ContaDTO {
         this.limite = conta.getLimite();
         this.cliente = new ClienteDTO(conta.getCliente());
         this.chavePIX = conta.getChavePIX();
+        this.cpf = cliente.getCpf();
     }
+
     public String getChavePIX() {
         return chavePIX;
     }
-    
+
+    public String getCpf() {
+        return cpf;
+    }
 
 }
-

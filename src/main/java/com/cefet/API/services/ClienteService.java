@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cefet.API.Repositories.ClienteRepository;
 import com.cefet.API.dto.ClienteDTO;
@@ -51,6 +52,13 @@ public class ClienteService {
         return new ClienteDTO(cliente);
     }
 
+    // Buscar por ID
+    public ClienteDTO findByCPF(String cpf) {
+        Cliente cliente = clienteRepository.findByCpf(cpf)
+                .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrada com CPF: " + cpf));
+        return new ClienteDTO(cliente);
+    }
+
     // Inserir Cliente
     public ClienteDTO insert(ClienteDTO dto) {
         Cliente cliente = new Cliente();
@@ -61,14 +69,29 @@ public class ClienteService {
     }
 
     // Atualizar 
-    public ClienteDTO update(Long id, ClienteDTO dto) {
+    public ClienteDTO update(Long id, Cliente dto) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrada com ID: " + id));
         cliente.setNome(dto.getNome());
         cliente.setCpf(dto.getCpf());
+        cliente.setSenha(passwordEncoder.encode(dto.getSenha()));
+        cliente.setEmail(dto.getEmail());
+        cliente.setTelefone(dto.getTelefone());
         Cliente clienteAtualizado = clienteRepository.save(cliente);
         return new ClienteDTO(clienteAtualizado);
     }
+    public ClienteDTO update(String cpf, Cliente dto) {
+        Cliente cliente = clienteRepository.findByCpf(cpf)
+                .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrada com cpf: " + cpf));
+        cliente.setNome(dto.getNome());
+        cliente.setCpf(dto.getCpf());
+         cliente.setSenha(passwordEncoder.encode(dto.getSenha()));
+        cliente.setEmail(dto.getEmail());
+        cliente.setTelefone(dto.getTelefone());
+        Cliente clienteAtualizado = clienteRepository.save(cliente);
+        return new ClienteDTO(clienteAtualizado);
+    }
+
 
     // Remover por ID
     public void delete(Long id) {
@@ -77,4 +100,16 @@ public class ClienteService {
         }
         clienteRepository.deleteById(id);
     }
+
+    @Transactional // Esta anotação é crucial
+    public void deleteByCpf(String cpf) {
+        // Verifica se o cliente existe antes de deletar
+        if (!clienteRepository.existsByCpf(cpf)) {
+            throw new EntityNotFoundException("Cliente não encontrado com CPF: " + cpf);
+        }
+        
+        clienteRepository.deleteByCpf(cpf);
+    }
+
+    
 }

@@ -5,6 +5,7 @@ import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cefet.API.Repositories.ClienteRepository;
 import com.cefet.API.Repositories.ContaRepository;
@@ -50,6 +51,7 @@ public class ContaService {
 		conta.setLimite(0.0);
 		conta.setSaldo(0.0);
 		conta.setClient(cliente);
+		conta.setCpf(cliente.getCpf());
 
 		return contaRepository.save(conta);
 	}
@@ -84,8 +86,25 @@ public class ContaService {
 		contaRepository.deleteById(id);
 	}
 
+	@Transactional // Esta anotação é crucial
+    public void deleteByCpf(String cpf) {
+        // Verifica se o cliente existe antes de deletar
+        if (!clienteRepository.existsByCpf(cpf)) {
+            throw new EntityNotFoundException("Cliente não encontrado com CPF: " + cpf);
+        }
+        
+        clienteRepository.deleteByCpf(cpf);
+    }
+
 	public List<ContaDTO> findByClienteId(Long clienteId) {
 		List<Conta> contas = contaRepository.findByClienteId(clienteId);
+		return contas.stream()
+				.map(ContaDTO::new)
+				.toList();
+	}
+
+	public List<ContaDTO> findByClienteCpf(String cpf) {
+		List<Conta> contas = contaRepository.findByClienteCpf(cpf);
 		return contas.stream()
 				.map(ContaDTO::new)
 				.toList();
@@ -105,10 +124,30 @@ public class ContaService {
 		return new ContaDTO(contaAtualizada);
 	}
 
+	public ContaDTO atualizarChavePIXCpf(String cpf, String novaChavePIX) {
+		Conta conta = contaRepository.findByCpf(cpf)
+				.orElseThrow(() -> new EntityNotFoundException("Conta não encontrada com CPF: " + cpf));
+
+		// Validações opcionais (ex: formato da chave, unicidade)
+		if (novaChavePIX == null || novaChavePIX.isBlank()) {
+			throw new IllegalArgumentException("Chave PIX inválida!");
+		}
+
+		conta.setChavePIX(novaChavePIX);
+		Conta contaAtualizada = contaRepository.save(conta);
+		return new ContaDTO(contaAtualizada);
+	}
+
 	public Double calcularSaldoTotalPorClienteId(Long clienteId) {
 		Double saldoTotal = contaRepository.sumSaldoByClienteId(clienteId);
 		return saldoTotal != null ? saldoTotal : 0.0; // Retorna 0.0 se não houver contas
 	}
+
+	public Double calcularSaldoTotalPorClienteCpf(String cpf) {
+		Double saldoTotal = contaRepository.sumSaldoByClienteCpf(cpf);
+		return saldoTotal != null ? saldoTotal : 0.0; // Retorna 0.0 se não houver contas
+	}
+	
 
 	// Buscar por idCliente
 	public List<ContaDTO> findByPessoaId(Long idCliente) {

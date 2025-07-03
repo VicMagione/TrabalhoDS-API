@@ -44,9 +44,21 @@ public class ContaController {
 		return ResponseEntity.ok(contas);
 	}
 
+	@GetMapping("/cliente/cpf/{cpf}") // Exemplo: /contas/cliente/cpf/142
+	public ResponseEntity<List<ContaDTO>> getContasPorClienteCPF(@PathVariable String cpf) {
+		List<ContaDTO> contas = contaService.findByClienteCpf(cpf);
+		return ResponseEntity.ok(contas);
+	}
+
 	@GetMapping("/cliente/{clienteId}/saldo-total")
 	public ResponseEntity<Double> getSaldoTotalPorCliente(@PathVariable Long clienteId) {
 		Double saldoTotal = contaService.calcularSaldoTotalPorClienteId(clienteId);
+		return ResponseEntity.ok(saldoTotal);
+	}
+
+	@GetMapping("/cliente/cpf/{cpf}/saldo-total")
+	public ResponseEntity<Double> getSaldoTotalPorCliente(@PathVariable String cpf) {
+		Double saldoTotal = contaService.calcularSaldoTotalPorClienteCpf(cpf);
 		return ResponseEntity.ok(saldoTotal);
 	}
 
@@ -67,6 +79,11 @@ public class ContaController {
 		contaService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
+	@DeleteMapping("/cpf/{cpf}")
+	public ResponseEntity<Void> delete(@PathVariable String cpf) {
+		contaService.deleteByCpf(cpf);
+		return ResponseEntity.noContent().build();
+	}
 
 	@PatchMapping("/{id}/chave-pix") // Endpoint dedicado para atualizar apenas a Chave PIX
 	public ResponseEntity<ContaDTO> atualizarChavePIX(
@@ -75,6 +92,16 @@ public class ContaController {
 	) {
 		String novaChavePIX = request.get("chavePIX");
 		ContaDTO contaAtualizada = contaService.atualizarChavePIX(id, novaChavePIX);
+		return ResponseEntity.ok(contaAtualizada);
+	}
+
+	@PatchMapping("/cpf/{cpf}/chave-pix") // Endpoint dedicado para atualizar apenas a Chave PIX
+	public ResponseEntity<ContaDTO> atualizarChavePIXCpf(
+			@PathVariable String cpf,
+			@RequestBody Map<String, String> request // Recebe um JSON com a chave
+	) {
+		String novaChavePIX = request.get("chavePIX");
+		ContaDTO contaAtualizada = contaService.atualizarChavePIXCpf(cpf, novaChavePIX);
 		return ResponseEntity.ok(contaAtualizada);
 	}
 }

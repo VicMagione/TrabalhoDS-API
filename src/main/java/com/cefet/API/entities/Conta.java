@@ -31,9 +31,31 @@ public class Conta {
     @Column
     private Double limite = 0.0;
 
+    @Column
+    private String cpf;
+
     public Double getLimite() {
         return limite;
     }
+
+
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
+
+
+    public String getCpf() {
+        return cpf;
+    }
+
+
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
 
 
     public void setLimite(Double limite) {
@@ -67,6 +89,7 @@ public class Conta {
         this.numero = conta.numero;
         this.limite = conta.limite;
         this.saldo = conta.saldo;
+        this.cpf = conta.cliente.getCpf();
     }
 
     public Double getSaldo() {

@@ -31,6 +31,10 @@ public class ClienteDetails implements UserDetails {
     public String getUsername() {
         return cliente.getCpf();
     }
+    
+    public Long getID(){
+        return cliente.getId();
+    }
 
     @Override
     public boolean isAccountNonExpired() {
