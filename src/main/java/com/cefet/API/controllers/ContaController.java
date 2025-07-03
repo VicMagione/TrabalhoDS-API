@@ -1,10 +1,13 @@
 package com.cefet.API.controllers;
+
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -35,6 +38,18 @@ public class ContaController {
 		return ResponseEntity.ok(contaDTOs);
 	}
 
+	@GetMapping("/cliente/{clienteId}") // Exemplo: /contas/cliente/1
+	public ResponseEntity<List<ContaDTO>> getContasPorCliente(@PathVariable Long clienteId) {
+		List<ContaDTO> contas = contaService.findByClienteId(clienteId);
+		return ResponseEntity.ok(contas);
+	}
+
+	@GetMapping("/cliente/{clienteId}/saldo-total")
+	public ResponseEntity<Double> getSaldoTotalPorCliente(@PathVariable Long clienteId) {
+		Double saldoTotal = contaService.calcularSaldoTotalPorClienteId(clienteId);
+		return ResponseEntity.ok(saldoTotal);
+	}
+
 	@PostMapping
 	public ResponseEntity<Conta> create(@RequestBody Conta conta) {
 		Conta contaNovo = contaService.insert(conta);
@@ -52,5 +67,14 @@ public class ContaController {
 		contaService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
-}
 
+	@PatchMapping("/{id}/chave-pix") // Endpoint dedicado para atualizar apenas a Chave PIX
+	public ResponseEntity<ContaDTO> atualizarChavePIX(
+			@PathVariable Long id,
+			@RequestBody Map<String, String> request // Recebe um JSON com a chave
+	) {
+		String novaChavePIX = request.get("chavePIX");
+		ContaDTO contaAtualizada = contaService.atualizarChavePIX(id, novaChavePIX);
+		return ResponseEntity.ok(contaAtualizada);
+	}
+}

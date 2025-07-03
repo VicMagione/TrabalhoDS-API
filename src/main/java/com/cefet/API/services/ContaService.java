@@ -23,7 +23,6 @@ public class ContaService {
 	@Autowired
 	private ClienteRepository clienteRepository;
 
-
 	// Buscar todos
 	public List<ContaDTO> findAll() {
 		List<Conta> listaConta = contaRepository.findAll();
@@ -39,20 +38,21 @@ public class ContaService {
 
 	// Inserir Cliente
 	public Conta insert(Conta dto) {
-    Random gerador = new Random();
-    Cliente cliente = clienteRepository.findByCpf(dto.getCliente().getCpf())
-            .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com CPF: " + dto.getCliente().getCpf()));
+		Random gerador = new Random();
+		Cliente cliente = clienteRepository.findByCpf(dto.getCliente().getCpf())
+				.orElseThrow(() -> new EntityNotFoundException(
+						"Cliente não encontrado com CPF: " + dto.getCliente().getCpf()));
 
-    Conta conta = new Conta();
-    String nomeNumero = cliente.getNome(); // Pega o nome do cliente encontrado
-    String doisPrimeiros = nomeNumero.substring(0, 2);
-    conta.setNumero(doisPrimeiros + "-" + (gerador.nextInt(900000)+100000));
-    conta.setLimite(0.0);
-    conta.setSaldo(0.0);
-    conta.setClient(cliente);
+		Conta conta = new Conta();
+		String nomeNumero = cliente.getNome(); // Pega o nome do cliente encontrado
+		String doisPrimeiros = nomeNumero.substring(0, 2);
+		conta.setNumero(doisPrimeiros + "-" + (gerador.nextInt(900000) + 100000));
+		conta.setLimite(0.0);
+		conta.setSaldo(0.0);
+		conta.setClient(cliente);
 
-    return contaRepository.save(conta);
-}
+		return contaRepository.save(conta);
+	}
 
 	// Atualizar Tipo
 	public ContaDTO update(Long id, ContaDTO dto) {
@@ -66,7 +66,8 @@ public class ContaService {
 		}
 
 		Cliente cliente = clienteRepository.findByCpf(dto.getCliente().getCpf())
-				.orElseThrow(() -> new EntityNotFoundException("Cliente não encontrada com CPF: " + dto.getCliente().getCpf()));
+				.orElseThrow(() -> new EntityNotFoundException(
+						"Cliente não encontrada com CPF: " + dto.getCliente().getCpf()));
 
 		conta.setNumero(dto.getNumero());
 		conta.setClient(cliente);
@@ -81,6 +82,32 @@ public class ContaService {
 			throw new EntityNotFoundException("Conta não encontrada com ID: " + id);
 		}
 		contaRepository.deleteById(id);
+	}
+
+	public List<ContaDTO> findByClienteId(Long clienteId) {
+		List<Conta> contas = contaRepository.findByClienteId(clienteId);
+		return contas.stream()
+				.map(ContaDTO::new)
+				.toList();
+	}
+
+	public ContaDTO atualizarChavePIX(Long id, String novaChavePIX) {
+		Conta conta = contaRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Conta não encontrada com ID: " + id));
+
+		// Validações opcionais (ex: formato da chave, unicidade)
+		if (novaChavePIX == null || novaChavePIX.isBlank()) {
+			throw new IllegalArgumentException("Chave PIX inválida!");
+		}
+
+		conta.setChavePIX(novaChavePIX);
+		Conta contaAtualizada = contaRepository.save(conta);
+		return new ContaDTO(contaAtualizada);
+	}
+
+	public Double calcularSaldoTotalPorClienteId(Long clienteId) {
+		Double saldoTotal = contaRepository.sumSaldoByClienteId(clienteId);
+		return saldoTotal != null ? saldoTotal : 0.0; // Retorna 0.0 se não houver contas
 	}
 
 	// Buscar por idCliente

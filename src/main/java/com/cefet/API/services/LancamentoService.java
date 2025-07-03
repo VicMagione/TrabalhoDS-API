@@ -10,6 +10,7 @@ import com.cefet.API.Repositories.LancamentoRepository;
 import com.cefet.API.dto.LancamentoDTO;
 import com.cefet.API.entities.Conta;
 import com.cefet.API.entities.Lancamento;
+import com.cefet.API.entities.Operacao;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -19,7 +20,7 @@ public class LancamentoService {
     private LancamentoRepository lancamentoRepository;
 
     @Autowired
-	private ContaRepository contaRepository;
+    private ContaRepository contaRepository;
 
     // Buscar todas os lancamentos
     public List<LancamentoDTO> findAll() {
@@ -36,24 +37,34 @@ public class LancamentoService {
 
     // Inserir Lancamento
     public LancamentoDTO insert(LancamentoDTO lancamentoDTO) {
-    Conta conta = contaRepository.findById(lancamentoDTO.getIdConta())
-        .orElseThrow(() -> new EntityNotFoundException("Conta não encontrada com ID: " + lancamentoDTO.getIdConta()));
+        Conta conta = contaRepository.findById(lancamentoDTO.getIdConta())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Conta não encontrada com ID: " + lancamentoDTO.getIdConta()));
 
-    Lancamento lancamento = new Lancamento();
-    lancamento.setValor(lancamentoDTO.getValor());
-    lancamento.setConta(conta);
+        Lancamento lancamento = new Lancamento();
+        lancamento.setValor(lancamentoDTO.getValor());
+        lancamento.setConta(conta);
+        lancamento.setOperacao(lancamentoDTO.getOperacao());
+        lancamento.setTipo(lancamentoDTO.getTipo());
 
-    // Atualiza o saldo da conta
-    conta.setSaldo(conta.getSaldo() + lancamento.getValor());
+        Operacao op1 = Operacao.DEPOSITO;
+        Operacao op2 = Operacao.SAQUE;
+        if (lancamento.getOperacao() == op1) {// Atualiza o saldo da conta
+            conta.setSaldo(conta.getSaldo() + lancamento.getValor());
+        }
 
-    contaRepository.save(conta); // Salva a conta com saldo atualizado
-    lancamentoRepository.save(lancamento); // Salva o lançamento
+        if (lancamento.getOperacao() == op2) {
+            conta.setSaldo(conta.getSaldo() - lancamento.getValor());
+        }
 
-    return new LancamentoDTO(lancamento);
-}
+        contaRepository.save(conta); // Salva a conta com saldo atualizado
+        lancamentoRepository.save(lancamento); // Salva o lançamento
+
+        return new LancamentoDTO(lancamento);
+    }
 
     // Atualizar Lancamento
-    public LancamentoDTO update(Long id,LancamentoDTO lancamentoDTO) {
+    public LancamentoDTO update(Long id, LancamentoDTO lancamentoDTO) {
         Lancamento lancamento = lancamentoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Lancamento não encontrado com ID: " + id));
         // Garante que o lancamento não seja alterado
@@ -72,6 +83,5 @@ public class LancamentoService {
         }
         lancamentoRepository.deleteById(id);
     }
-
 
 }

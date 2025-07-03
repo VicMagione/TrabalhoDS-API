@@ -8,7 +8,9 @@ public class ContaDTO {
     private String numero;
     private Double saldo;
     private Double limite;
+    private String chavePIX;
     private ClienteDTO cliente;
+    
 
 
     public Double getLimite() {
@@ -39,6 +41,10 @@ public class ContaDTO {
         this.saldo = conta.getSaldo();
         this.limite = conta.getLimite();
         this.cliente = new ClienteDTO(conta.getCliente());
+        this.chavePIX = conta.getChavePIX();
+    }
+    public String getChavePIX() {
+        return chavePIX;
     }
     
 

@@ -37,6 +37,22 @@ public class Lancamento {
     public Lancamento() {
     }
 
+    public Tipo getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(Tipo tipo) {
+        this.tipo = tipo;
+    }
+
+    public Operacao getOperacao() {
+        return operacao;
+    }
+
+    public void setOperacao(Operacao operacao) {
+        this.operacao = operacao;
+    }
+
     public Lancamento(Long id, Conta conta, Double valor) {
         this.id = id;
         this.conta = conta;

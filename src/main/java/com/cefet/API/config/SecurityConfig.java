@@ -30,7 +30,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**", "/clientes/**","/contas/**", "/auth/login"))
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**", "/clientes/**", "/contas/**",
+                        "/lancamentos/**", "/auth/login"))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/h2-console/**").permitAll() // Acesso ao H2 Console
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
@@ -39,12 +40,26 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll() // Permitir endpoint de login
                         .requestMatchers(HttpMethod.GET, "/clientes").hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/clientes/{id}").hasAnyRole("GESTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/clientes/{id}").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/clientes/cpf/{cpf}").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/clientes/{id}").hasAnyRole("GESTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/clientes/cpf/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/clientes/cpf/**").permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/contas/{id}").hasAnyRole("GESTOR", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/contas").hasAnyRole("GESTOR", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/contas").hasAnyRole("GESTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/contas/cliente/cpf/{cpf}").hasAnyRole("GESTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/contas/cliente/{id}").hasAnyRole("GESTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/contas/cliente/cpf/{cpf}/saldo-total")
+                        .hasAnyRole("GESTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/contas/cliente/{id}/saldo-total")
+                        .hasAnyRole("GESTOR", "ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/contas/**").hasAnyRole("GESTOR", "ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/contas/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/contas/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/contas/cpf/{cpf}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/contas/**").hasAnyRole("GESTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/contas/cpf/{cpf}").hasAnyRole("GESTOR", "ADMIN")
 
                         .requestMatchers(HttpMethod.GET, "/lancamentos").hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/lancamentos/{id}").hasAnyRole("ADMIN")
@@ -68,6 +83,7 @@ public class SecurityConfig {
     // .authorizeHttpRequests(auth -> auth.anyRequest().permitAll()); // Permite
     // return http.build();
     // }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
