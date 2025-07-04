@@ -26,6 +26,9 @@ public class Lancamento {
     @Column(nullable = false)
     private Double valor;
 
+    @Column
+    private Double bonus;
+
     @Enumerated(EnumType.STRING)
     @Column(name= "Tipo",nullable = false)
     private Tipo tipo;
@@ -60,6 +63,15 @@ public class Lancamento {
     }
 
    
+    public Lancamento(Long id, Conta conta, Double valor, Double bonus, Tipo tipo, Operacao operacao) {
+        this.id = id;
+        this.conta = conta;
+        this.valor = valor;
+        this.bonus = bonus;
+        this.tipo = tipo;
+        this.operacao = operacao;
+    }
+
     public Lancamento(Long id, Conta conta, Double valor, Tipo tipo, Operacao operacao) {
         this.id = id;
         this.conta = conta;
@@ -131,6 +143,14 @@ public class Lancamento {
     public void setDescricao(Object descricao) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'setDescricao'");
+    }
+
+    public Double getBonus() {
+        return bonus;
+    }
+
+    public void setBonus(Double bonus) {
+        this.bonus = bonus;
     }
 
 }

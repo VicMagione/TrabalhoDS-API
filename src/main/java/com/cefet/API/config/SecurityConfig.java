@@ -45,7 +45,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/clientes/{id}").hasAnyRole("GESTOR", "ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/clientes/cpf/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/clientes/cpf/**").permitAll()
-
+                        
+                        .requestMatchers(HttpMethod.GET, "/contas/verificar-chave-pix/{chave}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/contas/{id}").hasAnyRole("GESTOR", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/contas").hasAnyRole("GESTOR", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/contas").hasAnyRole("GESTOR", "ADMIN")
@@ -59,7 +60,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/contas/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/contas/cpf/{cpf}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/contas/**").hasAnyRole("GESTOR", "ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/contas/cpf/{cpf}").hasAnyRole("GESTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/contas/{id}/chave-limite").hasAnyRole("GESTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/contas/cpf/{cpf}/chave-limite").hasAnyRole("GESTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/contas/{id}/limite").hasAnyRole("GESTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/contas/cpf/{cpf}/chave-pix").hasAnyRole("GESTOR", "ADMIN")
 
                         .requestMatchers(HttpMethod.GET, "/lancamentos").hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/lancamentos/{id}").hasAnyRole("ADMIN")

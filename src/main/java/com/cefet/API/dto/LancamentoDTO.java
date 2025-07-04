@@ -8,6 +8,7 @@ import com.cefet.API.entities.Tipo;
 public class LancamentoDTO {
     private Long id;
     private Double valor;
+    private Double bonus;
     private Conta conta;
     private Long idConta;
     private Operacao operacao;
@@ -31,6 +32,7 @@ public class LancamentoDTO {
     public LancamentoDTO(Lancamento lancamento) {
         this.id = lancamento.getId();
         this.valor = lancamento.getValor();
+        this.bonus = lancamento.getBonus();
         this.conta = lancamento.getConta();
         this.idConta = lancamento.getConta().getId();
         this.tipo = lancamento.getTipo();
@@ -53,6 +55,11 @@ public class LancamentoDTO {
 
     public Conta getConta() {
         return conta;
+    }
+
+
+    public Double getBonus() {
+        return bonus;
     }
 
 

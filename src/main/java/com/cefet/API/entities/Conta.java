@@ -34,6 +34,9 @@ public class Conta {
     @Column
     private String cpf;
 
+    @Column
+    private String chavePIX;
+
     public Double getLimite() {
         return limite;
     }
@@ -72,8 +75,7 @@ public class Conta {
         this.chavePIX = chavePIX;
     }
 
-    @Column
-    private String chavePIX;
+    
 
 
     public Conta(Long id, String numero, Cliente cliente) {

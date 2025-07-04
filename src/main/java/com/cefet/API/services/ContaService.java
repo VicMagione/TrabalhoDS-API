@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.cefet.API.Repositories.ClienteRepository;
 import com.cefet.API.Repositories.ContaRepository;
@@ -87,14 +89,14 @@ public class ContaService {
 	}
 
 	@Transactional // Esta anotação é crucial
-    public void deleteByCpf(String cpf) {
-        // Verifica se o cliente existe antes de deletar
-        if (!clienteRepository.existsByCpf(cpf)) {
-            throw new EntityNotFoundException("Cliente não encontrado com CPF: " + cpf);
-        }
-        
-        clienteRepository.deleteByCpf(cpf);
-    }
+	public void deleteByCpf(String cpf) {
+		// Verifica se o cliente existe antes de deletar
+		if (!clienteRepository.existsByCpf(cpf)) {
+			throw new EntityNotFoundException("Cliente não encontrado com CPF: " + cpf);
+		}
+
+		clienteRepository.deleteByCpf(cpf);
+	}
 
 	public List<ContaDTO> findByClienteId(Long clienteId) {
 		List<Conta> contas = contaRepository.findByClienteId(clienteId);
@@ -111,6 +113,11 @@ public class ContaService {
 	}
 
 	public ContaDTO atualizarChavePIX(Long id, String novaChavePIX) {
+		if (contaRepository.existsByChavePIXAndIdNot(novaChavePIX, id)) {
+			throw new ResponseStatusException(
+					HttpStatus.BAD_REQUEST,
+					"Esta chave PIX já está em uso por outra conta");
+		}
 		Conta conta = contaRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Conta não encontrada com ID: " + id));
 
@@ -125,6 +132,7 @@ public class ContaService {
 	}
 
 	public ContaDTO atualizarChavePIXCpf(String cpf, String novaChavePIX) {
+
 		Conta conta = contaRepository.findByCpf(cpf)
 				.orElseThrow(() -> new EntityNotFoundException("Conta não encontrada com CPF: " + cpf));
 
@@ -147,11 +155,29 @@ public class ContaService {
 		Double saldoTotal = contaRepository.sumSaldoByClienteCpf(cpf);
 		return saldoTotal != null ? saldoTotal : 0.0; // Retorna 0.0 se não houver contas
 	}
-	
 
 	// Buscar por idCliente
 	public List<ContaDTO> findByPessoaId(Long idCliente) {
 		List<Conta> listaConta = contaRepository.findByClienteId(idCliente);
 		return listaConta.stream().map(ContaDTO::new).toList();
 	}
+
+	public ContaDTO atualizarLimite(Long id, Double novoLimite) {
+		Conta conta = contaRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Conta não encontrada com ID: " + id));
+
+		// Validações opcionais (ex: formato da chave, unicidade)
+		if (novoLimite == null) {
+			throw new IllegalArgumentException("Limite inválida!");
+		}
+
+		conta.setLimite(novoLimite);
+		Conta contaAtualizada = contaRepository.save(conta);
+		return new ContaDTO(contaAtualizada);
+	}
+
+	public boolean existeChavePix(String chave) {
+		return contaRepository.existsByChavePIX(chave);
+	}
+
 }

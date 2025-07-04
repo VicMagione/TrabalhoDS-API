@@ -49,8 +49,13 @@ public class LancamentoService {
 
         Operacao op1 = Operacao.DEPOSITO;
         Operacao op2 = Operacao.SAQUE;
-        if (lancamento.getOperacao() == op1) {// Atualiza o saldo da conta
-            conta.setSaldo(conta.getSaldo() + lancamento.getValor());
+        if (lancamento.getOperacao() == op1) {
+            if (lancamento.getValor() >= lancamento.getConta().getSaldo()) {
+                lancamento.setBonus(lancamento.getValor()*0.1);
+                conta.setSaldo(conta.getSaldo() + lancamento.getValor()+lancamento.getValor()*0.1);
+            } else {
+                conta.setSaldo(conta.getSaldo() + lancamento.getValor());
+            }
         }
 
         if (lancamento.getOperacao() == op2) {

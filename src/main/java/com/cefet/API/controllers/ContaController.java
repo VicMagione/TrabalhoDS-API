@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cefet.API.dto.ContaDTO;
@@ -79,6 +80,7 @@ public class ContaController {
 		contaService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
+
 	@DeleteMapping("/cpf/{cpf}")
 	public ResponseEntity<Void> delete(@PathVariable String cpf) {
 		contaService.deleteByCpf(cpf);
@@ -103,5 +105,22 @@ public class ContaController {
 		String novaChavePIX = request.get("chavePIX");
 		ContaDTO contaAtualizada = contaService.atualizarChavePIXCpf(cpf, novaChavePIX);
 		return ResponseEntity.ok(contaAtualizada);
+	}
+
+	@PatchMapping("{id}/limite") // Endpoint dedicado para atualizar apenas a Chave PIX
+	public ResponseEntity<ContaDTO> atualizarLimite(
+			@PathVariable Long id,
+			@RequestBody Map<String, Double> request // Recebe um JSON com a chave
+	) {
+		Double novoLimite = request.get("limite");
+		ContaDTO contaAtualizada = contaService.atualizarLimite(id, novoLimite);
+		return ResponseEntity.ok(contaAtualizada);
+	}
+
+	@GetMapping("/verificar-chave-pix/{chave}")
+	public ResponseEntity<Boolean> verificarChavePixExistente(
+			@RequestParam String chave) {
+		boolean existe = contaService.existeChavePix(chave);
+		return ResponseEntity.ok(existe);
 	}
 }
