@@ -8,6 +8,7 @@ public class ClienteDTO {
     private String cpf;
     private String email;
     private String telefone;
+    private Double saldoTotal;
 
     public String getEmail() {
         return email;
@@ -21,6 +22,10 @@ public class ClienteDTO {
         this.cpf = cliente.getCpf();
         this.email = cliente.getEmail();
         this.telefone = cliente.getTelefone();
+        this.saldoTotal = cliente.getSaldoTotal();
+    }
+    public Double getSaldoTotal() {
+        return saldoTotal;
     }
     public ClienteDTO() {
     }

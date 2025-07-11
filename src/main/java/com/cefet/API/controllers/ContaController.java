@@ -123,4 +123,23 @@ public class ContaController {
 		boolean existe = contaService.existeChavePix(chave);
 		return ResponseEntity.ok(existe);
 	}
+
+	// Adicione este método ao ContaController.java
+	@PatchMapping("/{id}/saque")
+	public ResponseEntity<ContaDTO> realizarSaque(
+			@PathVariable Long id,
+			@RequestBody Map<String, Double> request) {
+		Double valor = request.get("valor");
+		ContaDTO contaAtualizada = contaService.realizarSaque(id, valor);
+		return ResponseEntity.ok(contaAtualizada);
+	}
+
+	@PatchMapping("/{id}/deposito")
+	public ResponseEntity<ContaDTO> realizarDeposito(
+			@PathVariable Long id,
+			@RequestBody Map<String, Double> request) {
+		Double valor = request.get("valor");
+		ContaDTO contaAtualizada = contaService.realizarDeposito(id, valor);
+		return ResponseEntity.ok(contaAtualizada);
+	}
 }

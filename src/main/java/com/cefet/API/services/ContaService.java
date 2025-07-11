@@ -12,7 +12,11 @@ import org.springframework.web.server.ResponseStatusException;
 import com.cefet.API.Repositories.ClienteRepository;
 import com.cefet.API.Repositories.ContaRepository;
 import com.cefet.API.dto.ContaDTO;
+import com.cefet.API.dto.LancamentoDTO;
 import com.cefet.API.entities.Conta;
+import com.cefet.API.entities.Lancamento;
+import com.cefet.API.entities.Operacao;
+import com.cefet.API.entities.Tipo;
 import com.cefet.API.entities.Cliente;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -25,6 +29,9 @@ public class ContaService {
 
 	@Autowired
 	private ClienteRepository clienteRepository;
+
+	@Autowired
+	private LancamentoService lancamentoService;
 
 	// Buscar todos
 	public List<ContaDTO> findAll() {
@@ -178,6 +185,48 @@ public class ContaService {
 
 	public boolean existeChavePix(String chave) {
 		return contaRepository.existsByChavePIX(chave);
+	}
+
+	@Transactional
+	public ContaDTO realizarSaque(Long idConta, Double valor) {
+		Conta conta = contaRepository.findById(idConta)
+				.orElseThrow(() -> new EntityNotFoundException("Conta não encontrada com ID: " + idConta));
+
+		if (valor <= 0) {
+			throw new IllegalArgumentException("Valor do saque deve ser positivo");
+		}
+
+		if (conta.getSaldo() + conta.getLimite() < valor) {
+			throw new IllegalArgumentException("Saldo insuficiente para realizar o saque");
+		}
+
+		// Cria o lançamento de saque
+		Lancamento lancamento = new Lancamento();
+		lancamento.setValor(valor);
+		lancamento.setConta(conta);
+		lancamento.setOperacao(Operacao.SAQUE);
+		lancamento.setTipo(Tipo.DEBITO); // ou outro tipo que você queira usar
+
+		lancamentoService.insert(new LancamentoDTO(lancamento));
+
+		return new ContaDTO(conta);
+	}
+
+	@Transactional
+	public ContaDTO realizarDeposito(Long idConta, Double valor) {
+		Conta conta = contaRepository.findById(idConta)
+				.orElseThrow(() -> new EntityNotFoundException("Conta não encontrada com ID: " + idConta));
+
+
+		Lancamento lancamento = new Lancamento();
+		lancamento.setValor(valor);
+		lancamento.setConta(conta);
+		lancamento.setOperacao(Operacao.DEPOSITO);
+		lancamento.setTipo(Tipo.CREDITO); 
+
+		lancamentoService.insert(new LancamentoDTO(lancamento));
+
+		return new ContaDTO(conta);
 	}
 
 }

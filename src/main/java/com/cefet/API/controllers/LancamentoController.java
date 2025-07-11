@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cefet.API.dto.LancamentoDTO;
+import com.cefet.API.dto.LancamentoPixDTO;
+import com.cefet.API.dto.LancamentoTransferenciaDTO;
+import com.cefet.API.entities.Lancamento;
 import com.cefet.API.services.LancamentoService;
 
 @RestController
@@ -40,8 +43,19 @@ public class LancamentoController {
         return ResponseEntity.status(201).body(lancamentoNovo);
     }
 
-     @PutMapping("/{id}")
-    public ResponseEntity<LancamentoDTO> update(@PathVariable Long id, @RequestBody LancamentoDTO pessoaDTO) {
+    @PostMapping("/transferir")
+    public ResponseEntity<LancamentoDTO> create(@RequestBody LancamentoTransferenciaDTO lancamentoDTO) {
+        LancamentoDTO lancamentoNovo = lancamentoService.insertTransferencia(lancamentoDTO);
+        return ResponseEntity.status(201).body(lancamentoNovo);
+    }
+    @PostMapping("/pix")
+    public ResponseEntity<LancamentoDTO> create(@RequestBody LancamentoPixDTO lancamentoDTO) {
+        LancamentoDTO lancamentoNovo = lancamentoService.insertPIX(lancamentoDTO);
+        return ResponseEntity.status(201).body(lancamentoNovo);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<LancamentoDTO> update(@PathVariable Long id, @RequestBody Lancamento pessoaDTO) {
         LancamentoDTO lancamentoAtualizado = lancamentoService.update(id, pessoaDTO);
         return ResponseEntity.ok(lancamentoAtualizado);
     }

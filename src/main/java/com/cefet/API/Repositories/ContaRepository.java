@@ -25,6 +25,8 @@ public interface ContaRepository extends JpaRepository<Conta, Long> {
 
         Optional<Conta> findByCpf(String cpf);
 
+        Optional<Conta> findByChavePIX(String chavePIX);
+
         boolean existsByCpf(String cpf);
 
         void deleteByCpf(String cpf);

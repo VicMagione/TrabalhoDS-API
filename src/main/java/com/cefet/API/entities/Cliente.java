@@ -23,6 +23,9 @@ public class Cliente {
     @Column(nullable = false, unique = true)
     private String cpf;
 
+    @Column
+    private Double saldoTotal = 0.0;
+
     @Column(nullable = false)
     private String email;
 
@@ -36,7 +39,8 @@ public class Cliente {
     @Column(name = "nivel_acesso", nullable = false)
     private NivelAcesso nivelAcesso;
 
-    public Cliente(Long id, String nome, String cpf, String senha, NivelAcesso nivelAcesso,String email,String telefone) {
+    public Cliente(Long id, String nome, String cpf, String senha, NivelAcesso nivelAcesso, String email,
+            String telefone) {
         this.id = id;
         this.nome = nome;
         this.cpf = cpf;
@@ -44,6 +48,7 @@ public class Cliente {
         this.nivelAcesso = nivelAcesso;
         this.email = email;
         this.telefone = telefone;
+        this.saldoTotal = 0.0;
     }
 
     public String getEmail() {
@@ -96,11 +101,6 @@ public class Cliente {
     public void setCpf(String cpf) {
         this.cpf = cpf;
     }
-
-    
-    
-
-    
 
     @Override
     public int hashCode() {
@@ -166,6 +166,14 @@ public class Cliente {
 
     public void setNivelAcesso(NivelAcesso nivelAcesso) {
         this.nivelAcesso = nivelAcesso;
+    }
+
+    public Double getSaldoTotal() {
+        return saldoTotal;
+    }
+
+    public void setSaldoTotal(Double saldoTotal) {
+        this.saldoTotal = saldoTotal;
     }
 
 }

@@ -4,16 +4,16 @@ import com.cefet.API.entities.Lancamento;
 import com.cefet.API.entities.Operacao;
 import com.cefet.API.entities.Tipo;
 
-public class LancamentoDTO {
+public class LancamentoPixDTO {
     private Long id;
     private Double valor;
-    private Double bonus;
-    private Long idConta;
+    private String pixOrigin;
+    private String pixDestino;
     private Operacao operacao;
     private Tipo tipo;
 
     
-    public LancamentoDTO() {
+    public LancamentoPixDTO() {
     }
 
 
@@ -27,11 +27,11 @@ public class LancamentoDTO {
     }
 
 
-    public LancamentoDTO(Lancamento lancamento) {
+    public LancamentoPixDTO(Lancamento lancamento) {
         this.id = lancamento.getId();
         this.valor = lancamento.getValor();
-        this.bonus = lancamento.getBonus_taxa();
-        this.idConta = lancamento.getConta().getId();
+        this.pixOrigin = lancamento.getConta().getChavePIX();
+        this.pixDestino = lancamento.getConta2().getChavePIX();
         this.tipo = lancamento.getTipo();
         this.operacao = lancamento.getOperacao();
     }
@@ -40,8 +40,8 @@ public class LancamentoDTO {
     public Long getId() {
         return id;
     }
-    public Long getIdConta() {
-        return idConta;
+    public String getPixOrigin() {
+        return pixOrigin;
     }
 
 
@@ -49,11 +49,8 @@ public class LancamentoDTO {
         return valor;
     }
 
-
-
-
-    public Double getBonus() {
-        return bonus;
+    public String getPixDestino() {
+        return pixDestino;
     }
 
 

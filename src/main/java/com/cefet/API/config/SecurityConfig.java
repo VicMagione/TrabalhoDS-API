@@ -19,7 +19,7 @@ import com.cefet.API.services.ClienteDetailsService;
 @Configuration
 public class SecurityConfig {
     @Autowired
-    private ClienteDetailsService usuarioDetailsService;
+    private ClienteDetailsService clienteDetailsService;
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
@@ -45,9 +45,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/clientes/{id}").hasAnyRole("GESTOR", "ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/clientes/cpf/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/clientes/cpf/**").permitAll()
-                        
+
                         .requestMatchers(HttpMethod.GET, "/contas/verificar-chave-pix/{chave}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/contas/{id}").hasAnyRole("GESTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/contas/{id}/saque").hasAnyRole("GESTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/contas/{id}/deposito").hasAnyRole("GESTOR", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/contas").hasAnyRole("GESTOR", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/contas").hasAnyRole("GESTOR", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/contas/cliente/cpf/{cpf}").hasAnyRole("GESTOR", "ADMIN")
@@ -61,13 +63,16 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/contas/cpf/{cpf}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/contas/**").hasAnyRole("GESTOR", "ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/contas/{id}/chave-limite").hasAnyRole("GESTOR", "ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/contas/cpf/{cpf}/chave-limite").hasAnyRole("GESTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/contas/cpf/{cpf}/chave-limite")
+                        .hasAnyRole("GESTOR", "ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/contas/{id}/limite").hasAnyRole("GESTOR", "ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/contas/cpf/{cpf}/chave-pix").hasAnyRole("GESTOR", "ADMIN")
 
                         .requestMatchers(HttpMethod.GET, "/lancamentos").hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/lancamentos/{id}").hasAnyRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/lancamentos").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/lancamentos").hasAnyRole("GESTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/lancamentos/transferir").hasAnyRole("GESTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/lancamentos/pix").hasAnyRole("GESTOR", "ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/lancamentos/**").hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/lancamentos/**").hasRole("ADMIN"))
                 .headers(headers -> headers.frameOptions().disable()) // Para H2 Console
@@ -97,7 +102,7 @@ public class SecurityConfig {
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(usuarioDetailsService);
+        authProvider.setUserDetailsService(clienteDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }

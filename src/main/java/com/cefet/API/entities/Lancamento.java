@@ -23,11 +23,15 @@ public class Lancamento {
     @JoinColumn(name = "id_conta", nullable = false)
     private Conta conta;
 
+    @ManyToOne
+    @JoinColumn(name = "id_conta2")
+    private Conta conta2;
+
     @Column(nullable = false)
     private Double valor;
 
     @Column
-    private Double bonus;
+    private Double bonus_taxa;
 
     @Enumerated(EnumType.STRING)
     @Column(name= "Tipo",nullable = false)
@@ -63,11 +67,11 @@ public class Lancamento {
     }
 
    
-    public Lancamento(Long id, Conta conta, Double valor, Double bonus, Tipo tipo, Operacao operacao) {
+    public Lancamento(Long id, Conta conta, Double valor, Double bonus_taxa, Tipo tipo, Operacao operacao) {
         this.id = id;
         this.conta = conta;
         this.valor = valor;
-        this.bonus = bonus;
+        this.bonus_taxa = bonus_taxa;
         this.tipo = tipo;
         this.operacao = operacao;
     }
@@ -75,6 +79,15 @@ public class Lancamento {
     public Lancamento(Long id, Conta conta, Double valor, Tipo tipo, Operacao operacao) {
         this.id = id;
         this.conta = conta;
+        this.valor = valor;
+        this.tipo = tipo;
+        this.operacao = operacao;
+    }
+
+    public Lancamento(Long id, Conta conta,Conta conta2, Double valor, Tipo tipo, Operacao operacao) {
+        this.id = id;
+        this.conta = conta;
+        this.conta2 = conta2;
         this.valor = valor;
         this.tipo = tipo;
         this.operacao = operacao;
@@ -145,12 +158,20 @@ public class Lancamento {
         throw new UnsupportedOperationException("Unimplemented method 'setDescricao'");
     }
 
-    public Double getBonus() {
-        return bonus;
+    public Double getBonus_taxa() {
+        return bonus_taxa;
     }
 
-    public void setBonus(Double bonus) {
-        this.bonus = bonus;
+    public void setBonus_taxa(Double bonus_taxa) {
+        this.bonus_taxa = bonus_taxa;
+    }
+
+    public Conta getConta2() {
+        return conta2;
+    }
+
+    public void setConta2(Conta conta2) {
+        this.conta2 = conta2;
     }
 
 }
