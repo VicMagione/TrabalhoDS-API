@@ -30,7 +30,6 @@ public class LancamentoDTO {
     public LancamentoDTO(Lancamento lancamento) {
         this.id = lancamento.getId();
         this.valor = lancamento.getValor();
-        this.bonus = lancamento.getBonus_taxa();
         this.idConta = lancamento.getConta().getId();
         this.tipo = lancamento.getTipo();
         this.operacao = lancamento.getOperacao();

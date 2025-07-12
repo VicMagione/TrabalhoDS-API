@@ -142,4 +142,24 @@ public class ContaController {
 		ContaDTO contaAtualizada = contaService.realizarDeposito(id, valor);
 		return ResponseEntity.ok(contaAtualizada);
 	}
+
+	@PatchMapping("/{id}/{id2}/transferencia")
+	public ResponseEntity<ContaDTO> realizarTransferencia(
+			@PathVariable Long id,
+			@PathVariable Long id2,
+			@RequestBody Map<String, Double> request) {
+		Double valor = request.get("valor");
+		ContaDTO contaAtualizada = contaService.realizarTransferencia(id,id2, valor);
+		return ResponseEntity.ok(contaAtualizada);
+	}
+
+	@PatchMapping("/{pix1}/{pix2}/pix")
+	public ResponseEntity<ContaDTO> realizarPix(
+			@PathVariable String pix1,
+			@PathVariable String pix2,
+			@RequestBody Map<String, Double> request) {
+		Double valor = request.get("valor");
+		ContaDTO contaAtualizada = contaService.realizarPix(pix1,pix2, valor);
+		return ResponseEntity.ok(contaAtualizada);
+	}
 }

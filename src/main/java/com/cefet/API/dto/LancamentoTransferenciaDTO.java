@@ -31,7 +31,6 @@ public class LancamentoTransferenciaDTO {
     public LancamentoTransferenciaDTO(Lancamento lancamento) {
         this.id = lancamento.getId();
         this.valor = lancamento.getValor();
-        this.taxa = lancamento.getBonus_taxa();
         this.idContaOrigin = lancamento.getConta().getId();
         this.idContaDestino = lancamento.getConta2().getId();
         this.tipo = lancamento.getTipo();

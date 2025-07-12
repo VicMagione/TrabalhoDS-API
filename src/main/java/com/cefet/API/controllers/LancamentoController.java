@@ -37,6 +37,12 @@ public class LancamentoController {
         return ResponseEntity.ok(lancamentos);
     }
 
+    @GetMapping("/conta/{contaId}") 
+	public ResponseEntity<List<LancamentoDTO>> getContasPorCliente(@PathVariable Long contaId) {
+		List<LancamentoDTO> lancamentos = lancamentoService.findByIdConta(contaId);
+		return ResponseEntity.ok(lancamentos);
+	}
+
     @PostMapping
     public ResponseEntity<LancamentoDTO> create(@RequestBody LancamentoDTO lancamentoDTO) {
         LancamentoDTO lancamentoNovo = lancamentoService.insert(lancamentoDTO);

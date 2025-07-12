@@ -217,14 +217,100 @@ public class ContaService {
 		Conta conta = contaRepository.findById(idConta)
 				.orElseThrow(() -> new EntityNotFoundException("Conta não encontrada com ID: " + idConta));
 
+		if (valor <= 0) {
+			throw new IllegalArgumentException("Valor do Deposito deve ser positivo");
+		}
 
 		Lancamento lancamento = new Lancamento();
 		lancamento.setValor(valor);
 		lancamento.setConta(conta);
 		lancamento.setOperacao(Operacao.DEPOSITO);
-		lancamento.setTipo(Tipo.CREDITO); 
+		lancamento.setTipo(Tipo.CREDITO);
+
+		if (valor>conta.getCliente().getSaldoTotal()) {
+			Lancamento lancamento2 = new Lancamento();
+			lancamento2.setValor(valor * 0.10);
+			lancamento2.setConta(conta);
+			lancamento2.setOperacao(Operacao.BONUS);
+			lancamento2.setTipo(Tipo.CREDITO);
+			lancamentoService.insert(new LancamentoDTO(lancamento2));
+
+		}
 
 		lancamentoService.insert(new LancamentoDTO(lancamento));
+
+		return new ContaDTO(conta);
+	}
+
+	@Transactional
+	public ContaDTO realizarTransferencia(Long idConta, Long idConta2, Double valor) {
+		Conta conta = contaRepository.findById(idConta)
+				.orElseThrow(() -> new EntityNotFoundException("Conta não encontrada com ID: " + idConta));
+		Conta conta2 = contaRepository.findById(idConta2)
+				.orElseThrow(() -> new EntityNotFoundException("Conta não encontrada com ID: " + idConta));
+
+		if (valor <= 0) {
+			throw new IllegalArgumentException("Valor da Transferencia deve ser positivo");
+		}
+
+		if (conta.getSaldo() + conta.getLimite() < valor) {
+			throw new IllegalArgumentException("Saldo insuficiente para realizar a Transferencia");
+		}
+		Lancamento lancamento = new Lancamento();
+		lancamento.setValor(valor);
+		lancamento.setConta(conta);
+		lancamento.setOperacao(Operacao.TRANSFERENCIA);
+		lancamento.setTipo(Tipo.DEBITO);
+		lancamentoService.insert(new LancamentoDTO(lancamento));
+
+		Lancamento lancamento2 = new Lancamento();
+		lancamento2.setValor(valor);
+		lancamento2.setConta(conta2);
+		lancamento2.setOperacao(Operacao.TRANSFERENCIA);
+		lancamento2.setTipo(Tipo.CREDITO);
+		lancamentoService.insert(new LancamentoDTO(lancamento2));
+
+		if (lancamento2.getConta().getCliente() == lancamento.getConta().getCliente()) {
+			Lancamento lancamento3 = new Lancamento();
+			lancamento3.setValor(valor * 0.10);
+			lancamento3.setConta(conta);
+			lancamento3.setOperacao(Operacao.TAXA);
+			lancamento3.setTipo(Tipo.DEBITO);
+			lancamentoService.insert(new LancamentoDTO(lancamento3));
+
+		}
+
+		return new ContaDTO(conta);
+	}
+
+	@Transactional
+	public ContaDTO realizarPix(String pix1, String pix2, Double valor) {
+		Conta conta = contaRepository.findByChavePIX(pix1)
+				.orElseThrow(() -> new EntityNotFoundException("Conta não encontrada com Pix: " + pix1));
+		Conta conta2 = contaRepository.findByChavePIX(pix2)
+				.orElseThrow(() -> new EntityNotFoundException("Conta não encontrada com Px: " + pix2));
+
+		if (valor <= 0) {
+			throw new IllegalArgumentException("Valor da Transferencia deve ser positivo");
+		}
+
+		if (conta.getSaldo() + conta.getLimite() < valor) {
+			throw new IllegalArgumentException("Saldo insuficiente para realizar a Transferencia");
+		}
+		Lancamento lancamento = new Lancamento();
+		lancamento.setValor(valor);
+		lancamento.setConta(conta);
+		lancamento.setOperacao(Operacao.PIX);
+		lancamento.setTipo(Tipo.DEBITO);
+
+		Lancamento lancamento2 = new Lancamento();
+		lancamento2.setValor(valor);
+		lancamento2.setConta(conta2);
+		lancamento2.setOperacao(Operacao.PIX);
+		lancamento2.setTipo(Tipo.CREDITO);
+
+		lancamentoService.insert(new LancamentoDTO(lancamento));
+		lancamentoService.insert(new LancamentoDTO(lancamento2));
 
 		return new ContaDTO(conta);
 	}

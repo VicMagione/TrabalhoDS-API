@@ -30,8 +30,6 @@ public class Lancamento {
     @Column(nullable = false)
     private Double valor;
 
-    @Column
-    private Double bonus_taxa;
 
     @Enumerated(EnumType.STRING)
     @Column(name= "Tipo",nullable = false)
@@ -40,6 +38,7 @@ public class Lancamento {
     @Enumerated(EnumType.STRING)
     @Column(name= "Operacao",nullable = false)
     private Operacao operacao;
+    
 
     public Lancamento() {
     }
@@ -67,14 +66,7 @@ public class Lancamento {
     }
 
    
-    public Lancamento(Long id, Conta conta, Double valor, Double bonus_taxa, Tipo tipo, Operacao operacao) {
-        this.id = id;
-        this.conta = conta;
-        this.valor = valor;
-        this.bonus_taxa = bonus_taxa;
-        this.tipo = tipo;
-        this.operacao = operacao;
-    }
+    
 
     public Lancamento(Long id, Conta conta, Double valor, Tipo tipo, Operacao operacao) {
         this.id = id;
@@ -158,13 +150,7 @@ public class Lancamento {
         throw new UnsupportedOperationException("Unimplemented method 'setDescricao'");
     }
 
-    public Double getBonus_taxa() {
-        return bonus_taxa;
-    }
-
-    public void setBonus_taxa(Double bonus_taxa) {
-        this.bonus_taxa = bonus_taxa;
-    }
+   
 
     public Conta getConta2() {
         return conta2;

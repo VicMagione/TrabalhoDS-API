@@ -14,7 +14,7 @@ import com.cefet.API.dto.LancamentoTransferenciaDTO;
 import com.cefet.API.entities.Cliente;
 import com.cefet.API.entities.Conta;
 import com.cefet.API.entities.Lancamento;
-import com.cefet.API.entities.Operacao;
+import com.cefet.API.entities.Tipo;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -42,6 +42,13 @@ public class LancamentoService {
         return new LancamentoDTO(lancamento);
     }
 
+    public List<LancamentoDTO> findByIdConta(Long contaId) {
+        List<Lancamento> lancamento = lancamentoRepository.findByContaId(contaId);
+        return lancamento.stream()
+                .map(LancamentoDTO::new)
+                .toList();
+    }
+
     // Inserir Lancamento
     public LancamentoDTO insert(LancamentoDTO lancamentoDTO) {
         Conta conta = contaRepository.findById(lancamentoDTO.getIdConta())
@@ -55,20 +62,16 @@ public class LancamentoService {
         lancamento.setOperacao(lancamentoDTO.getOperacao());
         lancamento.setTipo(lancamentoDTO.getTipo());
 
-        Operacao op1 = Operacao.DEPOSITO;
-        Operacao op2 = Operacao.SAQUE;
-        if (lancamento.getOperacao() == op1) {
-            if (lancamento.getValor() >= lancamento.getConta().getCliente().getSaldoTotal()) {
-                lancamento.setBonus_taxa(lancamento.getValor() * 0.1);
-                conta.setSaldo(conta.getSaldo() + lancamento.getValor() + lancamento.getValor() * 0.1);
-                cliente.setSaldoTotal(cliente.getSaldoTotal() + lancamento.getValor() + lancamento.getValor() * 0.1);
-            } else {
-                conta.setSaldo(conta.getSaldo() + lancamento.getValor());
-                cliente.setSaldoTotal(cliente.getSaldoTotal() + lancamento.getValor());
-            }
+        Tipo op1 = Tipo.CREDITO;
+        Tipo op2 = Tipo.DEBITO;
+        if (lancamento.getTipo() == op1) {
+
+            conta.setSaldo(conta.getSaldo() + lancamento.getValor());
+            cliente.setSaldoTotal(cliente.getSaldoTotal() + lancamento.getValor());
+
         }
 
-        if (lancamento.getOperacao() == op2) {
+        if (lancamento.getTipo() == op2) {
             conta.setSaldo(conta.getSaldo() - lancamento.getValor());
             cliente.setSaldoTotal(cliente.getSaldoTotal() - lancamento.getValor());
         }
@@ -100,10 +103,10 @@ public class LancamentoService {
         lancamento.setTipo(lancamentoDTO.getTipo());
 
         if (cliente.getId() == cliente2.getId()) {
-            lancamento.setBonus_taxa(lancamento.getValor() * 0.1);
+            // lancamento.setBonus_taxa(lancamento.getValor() * 0.1);
 
-            conta.setSaldo(conta.getSaldo() - lancamento.getValor()-(lancamento.getValor() * 0.1));
-            cliente.setSaldoTotal(cliente.getSaldoTotal() - lancamento.getValor()-(lancamento.getValor() * 0.1));
+            conta.setSaldo(conta.getSaldo() - lancamento.getValor() - (lancamento.getValor() * 0.1));
+            cliente.setSaldoTotal(cliente.getSaldoTotal() - lancamento.getValor() - (lancamento.getValor() * 0.1));
 
             conta2.setSaldo(conta2.getSaldo() + lancamento.getValor());
             cliente2.setSaldoTotal(cliente2.getSaldoTotal() + lancamento.getValor());
