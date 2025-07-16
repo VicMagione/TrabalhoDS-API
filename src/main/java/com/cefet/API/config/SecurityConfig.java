@@ -31,7 +31,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**", "/clientes/**", "/contas/**",
-                        "/lancamentos/**", "/auth/login"))
+                        "/lancamentos/**", "/auth/login","/acessos/**"))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/h2-console/**").permitAll() // Acesso ao H2 Console
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
@@ -79,7 +79,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/lancamentos/transferir").hasAnyRole("GESTOR", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/lancamentos/pix").hasAnyRole("GESTOR", "ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/lancamentos/**").hasAnyRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/lancamentos/**").hasRole("ADMIN"))
+                        .requestMatchers(HttpMethod.DELETE, "/lancamentos/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/acessos").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/acessos").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/acessos/**").hasRole("ADMIN"))
+                
                 .headers(headers -> headers.frameOptions().disable()) // Para H2 Console
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

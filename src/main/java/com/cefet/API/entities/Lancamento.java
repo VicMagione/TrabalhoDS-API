@@ -146,7 +146,6 @@ public class Lancamento {
     }
 
     public void setDescricao(Object descricao) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'setDescricao'");
     }
 

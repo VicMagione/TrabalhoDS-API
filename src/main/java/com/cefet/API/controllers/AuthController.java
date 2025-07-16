@@ -1,4 +1,8 @@
 package com.cefet.API.controllers;
+
+import java.sql.Date;
+import java.time.LocalDate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,10 +14,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cefet.API.Repositories.AcessoRepoisitory;
+import com.cefet.API.Repositories.ClienteRepository;
 import com.cefet.API.dto.JwtAuthenticationDTO;
 import com.cefet.API.dto.LoginDTO;
+import com.cefet.API.entities.Acesso;
+import com.cefet.API.entities.Cliente;
 import com.cefet.API.security.JwtTokenProvider;
 
+import jakarta.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/auth")
@@ -25,19 +34,31 @@ public class AuthController {
     @Autowired
     JwtTokenProvider tokenProvider;
 
+    @Autowired
+    private AcessoRepoisitory acessoRepository;
+
+    @Autowired
+    private ClienteRepository clienteRepository;
+
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginDTO loginDTO) {
 
         Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(
-                loginDTO.getCpf(),
-                loginDTO.getSenha()
-            )
-        );
+                new UsernamePasswordAuthenticationToken(
+                        loginDTO.getCpf(),
+                        loginDTO.getSenha()));
+    SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+    String jwt = tokenProvider.generateToken(authentication);
 
-        String jwt = tokenProvider.generateToken(authentication);
-        return ResponseEntity.ok(new JwtAuthenticationDTO(jwt));
+    Cliente cliente = clienteRepository.findByCpf(loginDTO.getCpf())
+        .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com CPF: " + loginDTO.getCpf()));
+
+    Acesso acesso = new Acesso();
+    acesso.setCliente(cliente);
+    acesso.setData(Date.valueOf(LocalDate.now())); 
+    acessoRepository.save(acesso);
+
+    return ResponseEntity.ok(new JwtAuthenticationDTO(jwt));
     }
 }
