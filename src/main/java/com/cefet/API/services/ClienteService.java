@@ -73,8 +73,6 @@ public class ClienteService {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrada com ID: " + id));
         cliente.setNome(dto.getNome());
-        cliente.setCpf(dto.getCpf());
-        cliente.setSenha(passwordEncoder.encode(dto.getSenha()));
         cliente.setEmail(dto.getEmail());
         cliente.setTelefone(dto.getTelefone());
         Cliente clienteAtualizado = clienteRepository.save(cliente);
@@ -84,8 +82,6 @@ public class ClienteService {
         Cliente cliente = clienteRepository.findByCpf(cpf)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrada com cpf: " + cpf));
         cliente.setNome(dto.getNome());
-        cliente.setCpf(dto.getCpf());
-         cliente.setSenha(passwordEncoder.encode(dto.getSenha()));
         cliente.setEmail(dto.getEmail());
         cliente.setTelefone(dto.getTelefone());
         Cliente clienteAtualizado = clienteRepository.save(cliente);
