@@ -68,7 +68,7 @@ public class ClienteService {
         return new ClienteDTO(pessoaSalvo);
     }
 
-    // Atualizar 
+    // Atualizar
     public ClienteDTO update(Long id, Cliente dto) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrada com ID: " + id));
@@ -78,6 +78,7 @@ public class ClienteService {
         Cliente clienteAtualizado = clienteRepository.save(cliente);
         return new ClienteDTO(clienteAtualizado);
     }
+
     public ClienteDTO update(String cpf, Cliente dto) {
         Cliente cliente = clienteRepository.findByCpf(cpf)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrada com cpf: " + cpf));
@@ -88,6 +89,29 @@ public class ClienteService {
         return new ClienteDTO(clienteAtualizado);
     }
 
+    public ClienteDTO updateSenha(Long id, Cliente dto) {
+        Cliente cliente = clienteRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrada com ID: " + id));
+        cliente.setNome(dto.getNome());
+        cliente.setCpf(dto.getCpf());
+        cliente.setSenha(passwordEncoder.encode(dto.getSenha()));
+        cliente.setEmail(dto.getEmail());
+        cliente.setTelefone(dto.getTelefone());
+        Cliente clienteAtualizado = clienteRepository.save(cliente);
+        return new ClienteDTO(clienteAtualizado);
+    }
+
+    public ClienteDTO updateSenha(String cpf, Cliente dto) {
+        Cliente cliente = clienteRepository.findByCpf(cpf)
+                .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrada com cpf: " + cpf));
+        cliente.setNome(dto.getNome());
+        cliente.setCpf(dto.getCpf());
+        cliente.setSenha(passwordEncoder.encode(dto.getSenha()));
+        cliente.setEmail(dto.getEmail());
+        cliente.setTelefone(dto.getTelefone());
+        Cliente clienteAtualizado = clienteRepository.save(cliente);
+        return new ClienteDTO(clienteAtualizado);
+    }
 
     // Remover por ID
     public void delete(Long id) {
@@ -103,9 +127,8 @@ public class ClienteService {
         if (!clienteRepository.existsByCpf(cpf)) {
             throw new EntityNotFoundException("Cliente não encontrado com CPF: " + cpf);
         }
-        
+
         clienteRepository.deleteByCpf(cpf);
     }
 
-    
 }

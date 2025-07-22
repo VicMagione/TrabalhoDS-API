@@ -64,6 +64,18 @@ public class ClienteController {
         return ResponseEntity.ok(pessoaAtualizado);
     }
 
+    @PutMapping("/senha/{id}")
+    public ResponseEntity<ClienteDTO> updateSenha(@PathVariable Long id, @RequestBody Cliente clienteDTO) {
+        ClienteDTO pessoaAtualizado = clienteService.updateSenha(id, clienteDTO);
+        return ResponseEntity.ok(pessoaAtualizado);
+    }
+
+    @PutMapping("/senha/cpf/{cpf}")
+    public ResponseEntity<ClienteDTO> updateSenha(@PathVariable String cpf, @RequestBody Cliente clienteDTO) {
+        ClienteDTO pessoaAtualizado = clienteService.updateSenha(cpf, clienteDTO);
+        return ResponseEntity.ok(pessoaAtualizado);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         clienteService.delete(id);

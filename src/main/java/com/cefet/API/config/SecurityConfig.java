@@ -31,7 +31,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**", "/clientes/**", "/contas/**",
-                        "/lancamentos/**", "/auth/login","/acessos/**"))
+                        "/lancamentos/**", "/auth/login", "/acessos/**"))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/h2-console/**").permitAll() // Acesso ao H2 Console
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
@@ -43,7 +43,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/clientes/{id}").hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/clientes/cpf/{cpf}").hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/clientes/{id}").hasAnyRole("GESTOR", "ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/clientes/cpf/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/clientes/senha/{id}").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/clientes/cpf/{cpf}").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/clientes/senha/cpf/{cpf}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/clientes/cpf/**").permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/contas/verificar-chave-pix/{chave}").permitAll()
@@ -84,7 +86,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/acessos").permitAll()
                         .requestMatchers(HttpMethod.GET, "/acessos").hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/acessos/**").hasRole("ADMIN"))
-                
+
                 .headers(headers -> headers.frameOptions().disable()) // Para H2 Console
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

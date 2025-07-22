@@ -51,6 +51,19 @@ public class Cliente {
         this.saldoTotal = 0.0;
     }
 
+    public Cliente(Cliente cliente){
+        this.id =cliente.getId();
+        this.nome =cliente.getNome();
+        this.cpf =cliente.getCpf();
+        this.senha=cliente.getSenha();
+        this.nivelAcesso = cliente.getNivelAcesso();
+        this.email = cliente.getEmail();
+        this.telefone =cliente.getTelefone();
+        this.saldoTotal =cliente.getSaldoTotal();
+    }
+
+
+
     public String getEmail() {
         return email;
     }
