@@ -11,6 +11,6 @@ FROM openjdk:17-jdk-slim
 
 EXPOSE 8080
 
-COPY --from=build target\test-classes\com\cefet\API\APIApplicationTests.class app.jar
+COPY --from=build target\test-classes\com\cefet\API\APIApplicationTests.jar app.jar
 
 ENTRYPOINT [ "java", "-jar", "app.jar" ]
