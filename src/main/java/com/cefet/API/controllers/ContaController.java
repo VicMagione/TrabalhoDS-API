@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -20,7 +21,10 @@ import com.cefet.API.dto.ContaDTO;
 import com.cefet.API.entities.Conta;
 import com.cefet.API.services.ContaService;
 
-@RestController
+@CrossOrigin(origins = {
+    "http://localhost:4200",
+    "https://trabalhodsvicmagi.netlify.app"
+})@RestController
 @RequestMapping("/contas")
 public class ContaController {
 

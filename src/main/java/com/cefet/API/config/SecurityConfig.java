@@ -13,6 +13,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 import com.cefet.API.security.JwtAuthenticationFilter;
 import com.cefet.API.services.ClienteDetailsService;
 
@@ -29,7 +32,8 @@ public class SecurityConfig {
     @SuppressWarnings("removal")
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+        http.cors().and()
+        
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**", "/clientes/**", "/contas/**",
                         "/lancamentos/**", "/auth/login", "/acessos/**"))
                 .authorizeHttpRequests(auth -> auth
@@ -103,6 +107,20 @@ public class SecurityConfig {
     // http.csrf(csrf -> csrf.disable())
     // .authorizeHttpRequests(auth -> auth.anyRequest().permitAll()); // Permite
     // return http.build();
+    // }
+
+    // @Bean
+    // public WebMvcConfigurer corsConfigurer() {
+    //     return new WebMvcConfigurer() {
+    //         @Override
+    //         public void addCorsMappings(CorsRegistry registry) {
+    //             registry.addMapping("/**")
+    //                     .allowedOrigins("https://trabalhodsvicmagi.netlify.app","http://localhost:8080","http://localhost:4200")
+    //                     .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+    //                     .allowedHeaders("*")
+    //                     .allowCredentials(true);
+    //         }
+    //     };
     // }
 
     @Bean
